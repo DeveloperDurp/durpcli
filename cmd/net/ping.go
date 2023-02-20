@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 
 */
 package net
@@ -14,13 +14,14 @@ import (
 
 var (
 	urlPath string
-	client  = http.Client{
-		Timeout: 2 * time.Second,
+	// Logic
+	client = http.Client{
+		Timeout: time.Second * 2,
 	}
 )
 
 func ping(domain string) (int, error) {
-	url := "https://" + domain
+	url := "http://" + domain
 	req, err := http.NewRequest("HEAD", url, nil)
 	if err != nil {
 		return 0, err
@@ -29,19 +30,15 @@ func ping(domain string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+	resp.Body.Close()
 	return resp.StatusCode, nil
 }
 
 // pingCmd represents the ping command
 var pingCmd = &cobra.Command{
 	Use:   "ping",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "This pings a remote URL and returns the response",
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if resp, err := ping(urlPath); err != nil {
@@ -53,6 +50,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
+
 	pingCmd.Flags().StringVarP(&urlPath, "url", "u", "", "The url to ping")
 
 	if err := pingCmd.MarkFlagRequired("url"); err != nil {
