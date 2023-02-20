@@ -18,7 +18,7 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "toolbox",
+	Use:   "GoCLI",
 	Short: "A brief description of your application",
 	Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
@@ -49,10 +49,15 @@ func init() {
 
 	setDefaults()
 
-	fmt.Println("name:", viper.Get("name"))
+	err := viper.WriteConfigAs("GoCLI.backup.yaml")
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
+
 	// Add my subcommand palette
 	rootCmd.AddCommand(info.InfoCmd)
 	rootCmd.AddCommand(net.NetCmd)
