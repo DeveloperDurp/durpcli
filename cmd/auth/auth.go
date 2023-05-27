@@ -1,12 +1,12 @@
-package net
+package auth
 
 import (
 	"github.com/spf13/cobra"
 )
 
-var NetCmd = &cobra.Command{
-	Use:   "net",
-	Short: "Net is a palette that contains network based commands",
+var AuthCmd = &cobra.Command{
+	Use:   "auth",
+	Short: "All things Authorization",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()

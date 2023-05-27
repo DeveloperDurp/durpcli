@@ -1,4 +1,4 @@
-module github.com/DeveloperDurp/GoCLI
+module gitlab.com/DeveloperDurp/DurpCLI
 
 go 1.17
 

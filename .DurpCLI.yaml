@@ -1,0 +1,6 @@
+auth:
+    clientid: ""
+    granttype: client_credentials
+    password: ""
+    url: https://authentik.durp.info/application/o/token/
+    username: ""

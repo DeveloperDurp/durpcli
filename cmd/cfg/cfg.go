@@ -1,12 +1,12 @@
-package net
+package cfg
 
 import (
 	"github.com/spf13/cobra"
 )
 
-var NetCmd = &cobra.Command{
-	Use:   "net",
-	Short: "Net is a palette that contains network based commands",
+var Cfgcmd = &cobra.Command{
+	Use:   "cfg",
+	Short: "All things Authorization",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
