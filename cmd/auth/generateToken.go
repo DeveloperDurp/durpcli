@@ -24,6 +24,7 @@ var (
 	url       string
 	username  string
 	password  string
+	scope     string
 )
 
 var generateTokenCmd = &cobra.Command{
@@ -31,7 +32,6 @@ var generateTokenCmd = &cobra.Command{
 	Short: "Prints disk usage of the current directory",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		if clientID == "" {
 			clientID = viper.GetViper().GetString("auth.clientID")
 		}
@@ -54,18 +54,25 @@ var generateTokenCmd = &cobra.Command{
 
 func init() {
 	generateTokenCmd.Flags().StringVarP(&clientID, "clientID", "c", "", "The ClientID")
-	generateTokenCmd.Flags().StringVarP(&grantType, "grantType", "g", "client_credentials", "The Grant Type")
+	generateTokenCmd.Flags().
+		StringVarP(&grantType, "grantType", "g", "client_credentials", "The Grant Type")
 	generateTokenCmd.Flags().StringVarP(&url, "url", "", "", "Token URL")
 	generateTokenCmd.Flags().StringVarP(&username, "username", "u", "", "username")
 	generateTokenCmd.Flags().StringVarP(&password, "password", "p", "", "password")
+	generateTokenCmd.Flags().StringVarP(&scope, "scope", "s", "openid profile", "scope")
 
 	AuthCmd.AddCommand(generateTokenCmd)
 }
 
-func generateToken(clientID string, grantType string, url string, username string, password string) {
-
-	formData := fmt.Sprintf("grant_type=%s&client_id=%s&username=%s&password=%s",
-		grantType, clientID, username, password)
+func generateToken(
+	clientID string,
+	grantType string,
+	url string,
+	username string,
+	password string,
+) {
+	formData := fmt.Sprintf("grant_type=%s&client_id=%s&username=%s&password=%s&scope=%s",
+		grantType, clientID, username, password, scope)
 
 	client := &http.Client{}
 
