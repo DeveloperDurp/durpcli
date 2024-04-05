@@ -3,9 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"os/user"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
 	"gitlab.com/DeveloperDurp/DurpCLI/cmd/auth"
 	"gitlab.com/DeveloperDurp/DurpCLI/cmd/cfg"
 	"gitlab.com/DeveloperDurp/DurpCLI/cmd/net"
@@ -35,36 +37,39 @@ func setDefaults() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
-
+	//if cfgFile != "" {
+	//	viper.SetConfigFile(cfgFile)
+	//} else {
+	//	cobra.CheckErr(err)
+	//}
 	setDefaults()
-
-	err := viper.WriteConfigAs(".DurpCLI.yaml")
-	if err != nil {
-		fmt.Println(err)
-	}
+	initConfig()
+	loadConfig()
 
 	rootCmd.AddCommand(net.NetCmd)
 	rootCmd.AddCommand(auth.AuthCmd)
 	rootCmd.AddCommand(cfg.Cfgcmd)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.DurpCLI.yaml)")
+	rootCmd.PersistentFlags().
+		StringVar(&cfgFile, "config", "", "config file (default is $HOME/.DurpCLI.yaml)")
 
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func initConfig() {
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
-	} else {
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".DurpCLI")
+	usr, err := user.Current()
+	if err != nil {
+		os.Exit(1)
 	}
+	viper.SetConfigType("yaml")
+	viper.SetConfigName(".durpcli")
+	viper.AddConfigPath(usr.HomeDir)
+}
 
+func loadConfig() {
 	viper.AutomaticEnv()
-	viper.ReadInConfig()
-
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Println("Config file not found. Creating a new one with defaults...")
+		viper.SafeWriteConfig()
+	}
 }
