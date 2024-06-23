@@ -1,7 +1,8 @@
 package cfg
 
 import (
-	"fmt"
+	"os"
+	"os/user"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -12,10 +13,14 @@ var newcfgcmd = &cobra.Command{
 	Short: "Generates a config file using current config",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := viper.WriteConfigAs(".DurpCLI.yaml")
+		usr, err := user.Current()
 		if err != nil {
-			fmt.Println(err)
+			os.Exit(1)
 		}
+		viper.SetConfigType("yaml")
+		viper.SetConfigName(".durpcli")
+		viper.AddConfigPath(usr.HomeDir)
+		viper.WriteConfig()
 
 	},
 }
