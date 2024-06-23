@@ -1,12 +1,11 @@
 package auth
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"io"
 	"net/http"
-	"strings"
 
+	"github.com/cli/oauth/device"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -35,20 +34,7 @@ var generateTokenCmd = &cobra.Command{
 		if clientID == "" {
 			clientID = viper.GetViper().GetString("auth.clientID")
 		}
-		if grantType == "" {
-			grantType = viper.GetViper().GetString("auth.grantType")
-		}
-		if url == "" {
-			url = viper.GetViper().GetString("auth.url")
-		}
-		if username == "" {
-			username = viper.GetViper().GetString("auth.username")
-		}
-		if password == "" {
-			password = viper.GetViper().GetString("auth.password")
-		}
-
-		generateToken(clientID, grantType, url, username, password)
+		generateToken(clientID)
 	},
 }
 
@@ -57,55 +43,32 @@ func init() {
 	generateTokenCmd.Flags().
 		StringVarP(&grantType, "grantType", "g", "client_credentials", "The Grant Type")
 	generateTokenCmd.Flags().StringVarP(&url, "url", "", "", "Token URL")
-	generateTokenCmd.Flags().StringVarP(&username, "username", "u", "", "username")
-	generateTokenCmd.Flags().StringVarP(&password, "password", "p", "", "password")
-	generateTokenCmd.Flags().StringVarP(&scope, "scope", "s", "openid profile", "scope")
 
 	AuthCmd.AddCommand(generateTokenCmd)
 }
 
 func generateToken(
 	clientID string,
-	grantType string,
-	url string,
-	username string,
-	password string,
 ) {
-	formData := fmt.Sprintf("grant_type=%s&client_id=%s&username=%s&password=%s&scope=%s",
-		grantType, clientID, username, password, scope)
+	scopes := []string{"openid", "email", "profile"}
+	httpClient := http.DefaultClient
 
-	client := &http.Client{}
-
-	req, err := http.NewRequest("POST", url, strings.NewReader(formData))
+	code, err := device.RequestCode(httpClient, "https://authentik.durp.info/application/o/device/", clientID, scopes)
 	if err != nil {
-		fmt.Println("Error creating request:", err)
-		return
+		panic(err)
 	}
 
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	fmt.Printf("Copy code: %s\n", code.UserCode)
+	fmt.Printf("then open: %s\n", code.VerificationURIComplete)
 
-	resp, err := client.Do(req)
+	accessToken, err := device.Wait(context.TODO(), httpClient, "https://authentik.durp.info/application/o/token/", device.WaitOptions{
+		ClientID:   clientID,
+		DeviceCode: code,
+		GrantType:  "urn:ietf:params:oauth:grant-type:device_code",
+	})
 	if err != nil {
-		fmt.Println("Error sending request:", err)
-		return
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("Error reading response:", err)
-		return
+		panic(err)
 	}
 
-	var response accessTokenResponse
-	err = json.Unmarshal(body, &response)
-	if err != nil {
-		fmt.Println("Error parsing response:", err)
-		return
-	}
-
-	fmt.Println("Access_Token:", response.AccessToken)
-	fmt.Println("Token_Type:", response.TokenType)
-	fmt.Println("Expires_In:", response.ExpiresIn)
-	fmt.Println("ID_Token:", response.IDToken)
+	fmt.Printf("Access token: %s\n", accessToken.Token)
 }

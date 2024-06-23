@@ -21,11 +21,12 @@ var rootCmd = &cobra.Command{
 	Long:  ``,
 }
 
-func Execute() {
+func Execute() error {
 	err := rootCmd.Execute()
 	if err != nil {
-		os.Exit(1)
+		return err
 	}
+	return nil
 }
 
 func setDefaults() {
@@ -46,9 +47,21 @@ func init() {
 	initConfig()
 	loadConfig()
 
+	//	styles := tui.DefaultStyles()
+	//	styles.Title.BorderForeground(lipgloss.AdaptiveColor{Light: `#E3BD2D`, Dark: `#E3BD2D`})
+	//	styles.Border.BorderForeground(lipgloss.AdaptiveColor{Light: `#E3BD2D`, Dark: `#E3BD2D`})
+	//	styles.SelectedItem.Foreground(lipgloss.AdaptiveColor{Light: `#353C3B`, Dark: `#353C3B`}).
+	//		Background(lipgloss.AdaptiveColor{Light: `#E3BD2D`, Dark: `#E3BD2D`})
+	//
+	//	b := tui.New(tui.WithStyles(styles))
+
+	//	rootCmd.SetUsageFunc(b.UsageFunc)
+	//	rootCmd.SetHelpFunc(b.HelpFunc)
+
 	rootCmd.AddCommand(net.NetCmd)
 	rootCmd.AddCommand(auth.AuthCmd)
 	rootCmd.AddCommand(cfg.Cfgcmd)
+	rootCmd.AddCommand(initialize())
 	rootCmd.PersistentFlags().
 		StringVar(&cfgFile, "config", "", "config file (default is $HOME/.DurpCLI.yaml)")
 
@@ -67,6 +80,7 @@ func initConfig() {
 
 func loadConfig() {
 	viper.AutomaticEnv()
+	viper.AddConfigPath("~/.durpcli.yaml")
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Println("Config file not found. Creating a new one with defaults...")

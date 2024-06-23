@@ -1,5 +1,5 @@
 auth:
-    clientid: ""
+    clientid: "6y8JS7qJ5MmpcT2uEje2A7eQ7AB25Q1GEs3CtXPf"
     granttype: client_credentials
     password: ""
     url: https://authentik.durp.info/application/o/token/

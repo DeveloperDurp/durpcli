@@ -1,7 +1,13 @@
 package main
 
-import "gitlab.com/DeveloperDurp/DurpCLI/cmd"
+import (
+	"log"
+
+	"gitlab.com/DeveloperDurp/DurpCLI/cmd"
+)
 
 func main() {
-	cmd.Execute()
+	if err := cmd.Execute(); err != nil {
+		log.Fatal(err)
+	}
 }
