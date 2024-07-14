@@ -1,12 +1,15 @@
 module gitlab.com/DeveloperDurp/DurpCLI
 
-go 1.20
+go 1.22.4
+
+toolchain go1.22.5
 
 require (
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.26.5
 	github.com/charmbracelet/lipgloss v0.11.0
 	github.com/cli/oauth v1.0.1
+	github.com/dreamsofcode-io/terminal-ui v0.0.0-20240627010942-9b0e7e95bd90
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/zalando/go-keyring v0.2.5

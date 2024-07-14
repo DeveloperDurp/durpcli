@@ -8,6 +8,7 @@ import (
 	"os/user"
 
 	"github.com/cli/oauth/device"
+	"github.com/dreamsofcode-io/terminal-ui/spinner"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zalando/go-keyring"
@@ -21,7 +22,10 @@ var loginCmd = &cobra.Command{
 		if clientID == "" {
 			clientID = viper.GetViper().GetString("auth.clientID")
 		}
+		s := spinner.New(spinner.Config{})
+		s.Start()
 		login(clientID)
+		s.Stop()
 	},
 }
 

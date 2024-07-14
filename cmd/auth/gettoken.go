@@ -14,7 +14,9 @@ var getTokenCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		gettokn()
+		token := gettoken()
+
+		fmt.Println(token)
 	},
 }
 
@@ -23,7 +25,7 @@ func init() {
 	AuthCmd.AddCommand(getTokenCmd)
 }
 
-func gettokn() {
+func gettoken() string {
 
 	service := "durpcli"
 	user, _ := user.Current()
@@ -33,5 +35,5 @@ func gettokn() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(token)
+	return token
 }
