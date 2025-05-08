@@ -8,7 +8,7 @@ require (
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.26.5
 	github.com/charmbracelet/lipgloss v0.11.0
-	github.com/cli/oauth v1.0.1
+	github.com/cli/oauth v1.2.0
 	github.com/dreamsofcode-io/terminal-ui v0.0.0-20240627010942-9b0e7e95bd90
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
