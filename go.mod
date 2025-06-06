@@ -2,7 +2,7 @@ module gitlab.com/DeveloperDurp/DurpCLI
 
 go 1.22.4
 
-toolchain go1.22.5
+toolchain go1.24.4
 
 require (
 	github.com/charmbracelet/bubbles v0.18.0
